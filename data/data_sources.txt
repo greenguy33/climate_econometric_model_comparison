@@ -1,0 +1,16 @@
+Population raster - https://sedac.ciesin.columbia.edu/data/collection/gpw-v4/documentation
+Agriculture raster - http://www.earthstat.org/
+
+All climate data (1948 - 2024) from https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html
+
+Daily air temp - air.2m.gauss.XXXX.nc
+Daily precip - prate.sfc.gauss.XXXX.nc
+Daily humidity - shum.2m.gauss.XXXX.nc
+
+Monthly air temp - air.2m.mon.mean.nc
+Monthly precip - prate.mon.mean.nc
+Monthly humidity - shum.2m.mon.mean.nc
+
+GDP Data - https://databank.worldbank.org/source/world-development-indicators#
+
+TFP Data - https://www.ers.usda.gov/data-products/international-agricultural-productivity/
