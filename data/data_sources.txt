@@ -11,6 +11,6 @@ Monthly air temp - air.2m.mon.mean.nc
 Monthly precip - prate.mon.mean.nc
 Monthly humidity - shum.2m.mon.mean.nc
 
-GDP Data - https://databank.worldbank.org/source/world-development-indicators#
+GDP Data (per capita - USD 2024) - https://databank.worldbank.org/source/world-development-indicators#
 
 TFP Data - https://www.ers.usda.gov/data-products/international-agricultural-productivity/

@@ -9,23 +9,23 @@ def create_shifted_file(input_file, output_dir):
 	cdo_command = ["cdo","sellonlatbox,-180,180,-90,90",input_file,f"{output_dir}/{new_filename}"]
 	subprocess.run(cdo_command)
 
-unshifted_daily_temp_dir = "temp/daily/unshifted"
-shifted_daily_temp_dir = "temp/daily/shifted"
+unshifted_daily_temp_dir = "../data/temp/daily/unshifted"
+shifted_daily_temp_dir = "../data/temp/daily/shifted"
 
-unshifted_daily_precip_dir = "precip/daily/unshifted"
-shifted_daily_precip_dir = "precip/daily/shifted"
+unshifted_daily_precip_dir = "../data/precip/daily/unshifted"
+shifted_daily_precip_dir = "../data/precip/daily/shifted"
 
-unshifted_daily_humidity_dir = "humidity/daily/unshifted"
-shifted_daily_humidity_dir = "humidity/daily/shifted"
+unshifted_daily_humidity_dir = "../data/humidity/daily/unshifted"
+shifted_daily_humidity_dir = "../data/humidity/daily/shifted"
 
-unshifted_monthly_temp_dir = "temp/monthly/unshifted"
-shifted_monthly_temp_dir = "temp/monthly/shifted"
+unshifted_monthly_temp_dir = "../data/temp/monthly/unshifted"
+shifted_monthly_temp_dir = "../data/temp/monthly/shifted"
 
-unshifted_monthly_precip_dir = "precip/monthly/unshifted"
-shifted_monthly_precip_dir = "precip/monthly/shifted"
+unshifted_monthly_precip_dir = "../data/precip/monthly/unshifted"
+shifted_monthly_precip_dir = "../data/precip/monthly/shifted"
 
-unshifted_monthly_humidity_dir = "humidity/monthly/unshifted"
-shifted_monthly_humidity_dir = "humidity/monthly/shifted"
+unshifted_monthly_humidity_dir = "../data/humidity/monthly/unshifted"
+shifted_monthly_humidity_dir = "../data/humidity/monthly/shifted"
 
 for filename in os.listdir(unshifted_daily_temp_dir):
 	create_shifted_file(f"{unshifted_daily_temp_dir}/{filename}",shifted_daily_temp_dir)
