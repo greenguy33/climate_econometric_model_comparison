@@ -14,3 +14,5 @@ Monthly humidity - shum.2m.mon.mean.nc
 GDP Data (per capita - USD 2024) - https://databank.worldbank.org/source/world-development-indicators#
 
 TFP Data - https://www.ers.usda.gov/data-products/international-agricultural-productivity/
+
+Natural disasters - https://www.emdat.be/

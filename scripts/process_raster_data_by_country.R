@@ -37,12 +37,12 @@ lapply(climate_vars, function(climate_var) {
 
       data <- c()
       data$country <- country_shapes$FIPS_CNTRY
-      data$pop_weighted_daily_temp <- pop_weighted_by_country
+      data$popweighted_by_country <- pop_weighted_by_country
       write.csv(data, str_interp("../data/${climate_var}/${timeframe}/processed_by_country/pop_weighted/${climate_var}.${timeframe}.bycountry.popweighted.${year}.csv"))
 
       data <- c()
       data$country <- country_shapes$FIPS_CNTRY
-      data$ag_weighted_daily_temp <- ag_weighted_by_country
+      data$agweighted_by_country <- ag_weighted_by_country
       write.csv(data, str_interp("../data/${climate_var}/${timeframe}/processed_by_country/ag_weighted/${climate_var}.${timeframe}.bycountry.agweighted.${year}.csv"))
     })
   })
