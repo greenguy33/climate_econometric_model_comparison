@@ -101,15 +101,25 @@ def find_closest_to_value_in_list(list_of_values, value_to_position, ):
 	else:
 		return position - 1
 
-def create_cross_validation_datasets(data, target_var, nfolds=10):
-	target_var_simple_name = target_var.split("_")[-1]
-	data = data.dropna(axis=0).reset_index(drop=True)
-	splits = StratifiedShuffleSplit(n_splits=10, test_size=.1).split(data, data.country + "_" + str(data.year))
-	for nfold, (train_split, test_split) in enumerate(splits):
-		training_rows = data.iloc[train_split]
-		test_rows = data.iloc[test_split]
-		training_rows.sort_values(by=["country","year"]).to_csv(f"../data/regression/cross_validation/{target_var_simple_name}_train_data_{nfold}.csv")
-		test_rows.sort_values(by=["country","year"]).to_csv(f"../data/regression/cross_validation/{target_var_simple_name}_test_data_{nfold}.csv")
+def create_test_and_training_datasets(data, target_var, nfolds=10):
+	for i in range(nfolds):
+		np.random.seed(i)
+		data = data.dropna(axis=0).reset_index(drop=True)
+		sorted_data = data.sort_values(by=target_var).reset_index(drop=True)
+		target_var_data = list(sorted_data[target_var])
+		num_test_samples = int(len(sorted_data)/10)
+		samples = np.random.normal(np.mean(target_var_data), np.std(target_var_data), num_test_samples)
+		indices_to_drop = []
+		for sample in samples:
+		    index = find_closest_to_value_in_list(target_var_data, sample)
+		    indices_to_drop.append(index)
+		    target_var_data[index] = np.NaN
+		withheld_data = sorted_data.iloc[indices_to_drop]
+		nonwithheld_data = sorted_data.drop(index=indices_to_drop)
+		nonwithheld_data = nonwithheld_data.reset_index(drop=True)
+		target_var_simple_name = target_var.split("_")[-1]
+		nonwithheld_data.sort_values(by=["country","year"]).to_csv(f"../data/regression/cross_validation/{target_var_simple_name}_regression_data_insample_{str(i)}.csv")
+		withheld_data.sort_values(by=["country","year"]).to_csv(f"../data/regression/cross_validation/{target_var_simple_name}_regression_data_outsample_{str(i)}.csv")
 
 gdp_data = pd.read_csv("../data/GDP_per_capita/worldbank_wdi_gdp_per_capita.csv")
 tfp_data = pd.read_csv("../data/TFP/AgTFPInternational2021_AG_TFP.csv", header=2)
@@ -254,7 +264,7 @@ formatted_tfp_data = add_incremental_effects_to_dataset("../data/regression/tfp_
 # create in-sample and out-of-sample datasets
 gdp_data = pd.read_csv("../data/regression/gdp_regression_data.csv")
 tfp_data = pd.read_csv("../data/regression/tfp_regression_data.csv")
-create_cross_validation_datasets(gdp_data, "fd_ln_gdp")
-create_cross_validation_datasets(tfp_data, "fd_ln_tfp")
+create_test_and_training_datasets(gdp_data, "fd_ln_gdp")
+create_test_and_training_datasets(tfp_data, "fd_ln_tfp")
 
 print("Results written to data/regression")
