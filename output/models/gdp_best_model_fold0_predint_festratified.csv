@@ -1,0 +1,8 @@
+model_vars,"['fd_humidity_[weight]', 'fd_humidity_[weight]_2', 'fd_humidity_annual_std_[weight]', 'fd_humidity_annual_std_[weight]_2', 'fd_precip_[weight]', 'fd_precip_[weight]_2', 'fd_precip_[weight]_3', 'fd_precip_annual_std_[weight]', 'fd_precip_daily_std_[weight]', 'fd_precip_daily_std_[weight]_2', 'fd_precip_daily_std_[weight]_3', 'fd_temp_annual_std_[weight]', 'fd_temp_annual_std_[weight]_2', 'fd_temp_annual_std_[weight]_3', 'fd_temp_daily_std_[weight]', 'fd_temp_daily_std_[weight]_2', 'humidity_daily_std_[weight]', 'precip_[weight]', 'precip_daily_std_[weight]', 'temp_[weight]', 'temp_[weight]_2', 'temp_[weight]_3', 'wildfire', 'wildfire_heat_wave']"
+fixed_effects,"['country', 'year']"
+incremental_effects,3
+weights,ag_weighted
+out_sample_mse,0.017494267861727187
+in_sample_mse,0.021964958514374112
+out_sample_pred_int_acc,0.7028301886792453
+in_sample_pred_int_acc,0.6970491803278689

@@ -75,6 +75,14 @@ def add_incremental_effects_to_dataset(file, year_range):
 		dataset[f"{country}_incremental_effect_3"] = np.power(dataset[f"{country}_incremental_effect_1"], 3)
 	dataset.to_csv(file)
 
+def add_fixed_effects_to_dataset(file):
+	dataset = pd.read_csv(file)
+	for country in sorted(list(set(dataset.country))):
+		dataset[f"{country}_country_fixed_effect"] = np.where(dataset.country == country, 1, 0)
+	for year in sorted(list(set(dataset.year))):
+		dataset[f"{year}_year_fixed_effect"] = np.where(dataset.year == year, 1, 0)
+	dataset.to_csv(file)
+
 def write_regression_data_to_file(file, data):
 	writer = csv.writer(file)
 	headers =["country","year"]
@@ -101,7 +109,7 @@ def find_closest_to_value_in_list(list_of_values, value_to_position, ):
 	else:
 		return position - 1
 
-def create_test_and_training_datasets(data, target_var, nfolds=10):
+def create_target_distributed_test_and_training_datasets(data, target_var, nfolds=10):
 	for i in range(nfolds):
 		np.random.seed(i)
 		data = data.dropna(axis=0).reset_index(drop=True)
@@ -114,21 +122,38 @@ def create_test_and_training_datasets(data, target_var, nfolds=10):
 		    index = find_closest_to_value_in_list(target_var_data, sample)
 		    indices_to_drop.append(index)
 		    target_var_data[index] = np.NaN
-		withheld_data = sorted_data.iloc[indices_to_drop]
-		nonwithheld_data = sorted_data.drop(index=indices_to_drop)
-		nonwithheld_data = nonwithheld_data.reset_index(drop=True)
-		target_var_simple_name = target_var.split("_")[-1]
-		nonwithheld_data.sort_values(by=["country","year"]).to_csv(f"../data/regression/cross_validation/{target_var_simple_name}_regression_data_insample_{str(i)}.csv")
-		withheld_data.sort_values(by=["country","year"]).to_csv(f"../data/regression/cross_validation/{target_var_simple_name}_regression_data_outsample_{str(i)}.csv")
+		test_data = sorted_data.iloc[indices_to_drop]
+		train_data = sorted_data.drop(index=indices_to_drop)
+		train_data = train_data.reset_index(drop=True)
 
-gdp_data = pd.read_csv("../data/GDP_per_capita/worldbank_wdi_gdp_per_capita.csv")
-tfp_data = pd.read_csv("../data/TFP/AgTFPInternational2021_AG_TFP.csv", header=2)
-natural_disasters_data = pd.read_csv("../data/natural_disasters/emdat_1960-2024.csv")
+		enc = OrdinalEncoder()
+		ordered_country_list = list(dict.fromkeys(train_data.country))
+		enc.fit(np.array(ordered_country_list).reshape(-1,1))
+		train_data["encoded_country_id"] = [int(val) for val in enc.transform(np.array(train_data.country).reshape(-1,1))]
+		test_data["encoded_country_id"] = [int(val) for val in enc.transform(np.array(test_data.country).reshape(-1,1))]
+
+		target_var_simple_name = target_var.split("_")[-1]
+		train_data.sort_values(by=["country","year"]).to_csv(f"data/regression/cross_validation/{target_var_simple_name}_regression_data_insample_targetdistributed_{str(i)}.csv")
+		test_data.sort_values(by=["country","year"]).to_csv(f"data/regression/cross_validation/{target_var_simple_name}_regression_data_outsample_targetdistributed_{str(i)}.csv")
+
+def create_stratified_test_and_training_datasets(data, target_var, nfolds=10):
+	target_var_simple_name = target_var.split("_")[-1]
+	data = data.dropna(axis=0).reset_index(drop=True)
+	splits = StratifiedShuffleSplit(n_splits=nfolds, test_size=.1).split(data, data.country + "_" + str(data.year))
+	for nfold, (train_split, test_split) in enumerate(splits):
+		training_rows = data.iloc[train_split]
+		test_rows = data.iloc[test_split]
+		training_rows.sort_values(by=["country","year"]).reset_index(drop=True).to_csv(f"data/regression/cross_validation/{target_var_simple_name}_regression_data_insample_festratified_{nfold}.csv")
+		test_rows.sort_values(by=["country","year"]).reset_index(drop=True).to_csv(f"data/regression/cross_validation/{target_var_simple_name}_regression_data_outsample_festratified_{nfold}.csv")
+
+gdp_data = pd.read_csv("data/GDP_per_capita/worldbank_wdi_gdp_per_capita.csv")
+tfp_data = pd.read_csv("data/TFP/AgTFPInternational2021_AG_TFP.csv", header=2)
+natural_disasters_data = pd.read_csv("data/natural_disasters/emdat_1960-2024.csv")
 disaster_types_to_extract = ["Wildfire", "Drought", "Heat wave"]
 gdp_years = range(1961,2024)
 tfp_years = range(1962,2022)
 
-fips_countries_with_climate_data = list(pd.read_csv("../data/temp/monthly/processed_by_country/unweighted/temp.monthly.bycountry.unweighted.mean.csv").country)
+fips_countries_with_climate_data = list(pd.read_csv("data/temp/monthly/processed_by_country/unweighted/temp.monthly.bycountry.unweighted.mean.csv").country)
 iso3_country_list = cc(fips_countries_with_climate_data, origin="fips", destination="iso3c")
 iso3_countries_with_climate_data = []
 fips_indices_to_delete = []
@@ -187,7 +212,7 @@ for climate_var in ["temp","precip","humidity"]:
 		 if weights != "unweighted":
 			 aggregate_var = "weighted_mean"
 		 weights_no_dash = weights.replace("_","")
-		 data = pd.read_csv(f"../data/{climate_var}/monthly/processed_by_country/{weights}/{climate_var}.monthly.bycountry.{weights_no_dash}.mean.csv")
+		 data = pd.read_csv(f"data/{climate_var}/monthly/processed_by_country/{weights}/{climate_var}.monthly.bycountry.{weights_no_dash}.mean.csv")
 		 for row in data.iterrows():
 			 prev_climate_val = None
 			 row = row[1]
@@ -222,7 +247,7 @@ for climate_var in ["temp","precip","humidity"]:
 			 aggregate_var = "weighted_mean"
 		 weights_no_dash = weights.replace("_","")
 		 for year in range(1960,2024):
-			 data = pd.read_csv(f"../data/{climate_var}/daily/processed_by_country/{weights}/{climate_var}.daily.bycountry.{weights_no_dash}.{year}.csv")
+			 data = pd.read_csv(f"data/{climate_var}/daily/processed_by_country/{weights}/{climate_var}.daily.bycountry.{weights_no_dash}.{year}.csv")
 			 data["ISO3"] = cc(data.country, origin="fips", destination="iso3c")
 			 climate_columns = data.loc[:, data.columns.str.startswith(f"{weights_no_dash}_by_country.{aggregate_var}")]
 			 data["annual_std"] = np.std(climate_columns, axis=1)
@@ -252,19 +277,26 @@ for climate_var in ["temp","precip","humidity"]:
 					 prev_results["annual_climate_std"][country] = {}
 				 prev_results["annual_climate_std"][country][year] = annual_climate_std
 
-
-with open("../data/regression/gdp_regression_data.csv", "w") as gdp_file:
+with open("data/regression/gdp_regression_data.csv", "w") as gdp_file:
 	 write_regression_data_to_file(gdp_file, formatted_gdp_data)
-with open("../data/regression/tfp_regression_data.csv", "w") as tfp_file:
+with open("data/regression/tfp_regression_data.csv", "w") as tfp_file:
 	 write_regression_data_to_file(tfp_file, formatted_tfp_data)
 
-formatted_gdp_data = add_incremental_effects_to_dataset("../data/regression/gdp_regression_data.csv", gdp_years)
-formatted_tfp_data = add_incremental_effects_to_dataset("../data/regression/tfp_regression_data.csv", tfp_years)
+print("Adding incremental and fixed effects...")
+
+add_incremental_effects_to_dataset("data/regression/gdp_regression_data.csv", gdp_years)
+add_incremental_effects_to_dataset("data/regression/tfp_regression_data.csv", tfp_years)
+add_fixed_effects_to_dataset("data/regression/gdp_regression_data.csv")
+add_fixed_effects_to_dataset("data/regression/tfp_regression_data.csv")
+
+print("Creating training/test splits...")
 
 # create in-sample and out-of-sample datasets
-gdp_data = pd.read_csv("../data/regression/gdp_regression_data.csv")
-tfp_data = pd.read_csv("../data/regression/tfp_regression_data.csv")
-create_test_and_training_datasets(gdp_data, "fd_ln_gdp")
-create_test_and_training_datasets(tfp_data, "fd_ln_tfp")
+gdp_data = pd.read_csv("data/regression/gdp_regression_data.csv")
+tfp_data = pd.read_csv("data/regression/tfp_regression_data.csv")
+create_target_distributed_test_and_training_datasets(gdp_data, "fd_ln_gdp")
+create_target_distributed_test_and_training_datasets(tfp_data, "fd_ln_tfp")
+create_stratified_test_and_training_datasets(gdp_data, "fd_ln_gdp")
+create_stratified_test_and_training_datasets(tfp_data, "fd_ln_tfp")
 
 print("Results written to data/regression")
