@@ -13,6 +13,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 
 warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
+
 def format_target_data(data, years, year_column_format, country_column, output_var):
 	formatted_outcome_var = {}
 	for row in data.iterrows():
@@ -77,10 +78,16 @@ def add_incremental_effects_to_dataset(file, year_range):
 
 def add_fixed_effects_to_dataset(file):
 	dataset = pd.read_csv(file)
-	for country in sorted(list(set(dataset.country))):
-		dataset[f"{country}_country_fixed_effect"] = np.where(dataset.country == country, 1, 0)
-	for year in sorted(list(set(dataset.year))):
-		dataset[f"{year}_year_fixed_effect"] = np.where(dataset.year == year, 1, 0)
+	for index, country in enumerate(sorted(list(set(dataset.country)))):
+		if index == 0:
+			dataset[f"{country}_country_fixed_effect"] = 0
+		else:
+			dataset[f"{country}_country_fixed_effect"] = np.where(dataset.country == country, 1, 0)
+	for index, year in enumerate(sorted(list(set(dataset.year)))):
+		if index == 0:
+			dataset[f"{year}_year_fixed_effect"] = 0
+		else:
+			dataset[f"{year}_year_fixed_effect"] = np.where(dataset.year == year, 1, 0)
 	dataset.to_csv(file)
 
 def write_regression_data_to_file(file, data):
