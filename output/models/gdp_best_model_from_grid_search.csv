@@ -1,0 +1,8 @@
+model_vars,"['drought', 'drought_heat_wave', 'fd_humidity_annual_std_[weight]', 'fd_humidity_annual_std_[weight]_2', 'fd_humidity_annual_std_[weight]_3', 'fd_humidity_daily_std_[weight]', 'fd_humidity_daily_std_[weight]_2', 'fd_precip_[weight]', 'fd_precip_[weight]_2', 'fd_precip_[weight]_3', 'fd_precip_annual_std_[weight]', 'fd_precip_annual_std_[weight]_2', 'fd_precip_daily_std_[weight]', 'fd_precip_daily_std_[weight]_2', 'fd_precip_daily_std_[weight]_3', 'fd_temp_annual_std_[weight]', 'fd_temp_annual_std_[weight]_2', 'fd_temp_annual_std_[weight]_3', 'precip_[weight]', 'precip_[weight]_2', 'precip_[weight]_3', 'precip_annual_std_[weight]', 'precip_annual_std_[weight]_2', 'precip_annual_std_[weight]_3', 'precip_daily_std_[weight]', 'precip_daily_std_[weight]_2', 'precip_daily_std_[weight]_3', 'temp_[weight]', 'temp_[weight]_2', 'temp_[weight]_3', 'temp_annual_std_[weight]', 'temp_annual_std_[weight]_2', 'temp_annual_std_[weight]_3', 'temp_daily_std_[weight]', 'temp_daily_std_[weight]_2', 'temp_daily_std_[weight]_3', 'wildfire_drought', 'wildfire_heat_wave']"
+fixed_effects,"['country', 'year']"
+incremental_effects,3
+weights,unweighted
+out_sample_mse,0.02531517273275271
+in_sample_mse,0.02111600934372384
+out_sample_pred_int_acc,0.6840801886792454
+in_sample_pred_int_acc,0.6957770491803279
