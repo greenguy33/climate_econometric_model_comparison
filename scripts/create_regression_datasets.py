@@ -74,6 +74,13 @@ def add_incremental_effects_to_dataset(file, year_range):
 		dataset[f"{country}_incremental_effect_1"] = np.where(dataset.country==country, dataset[f"{country}_incremental_effect_1"].cumsum(), 0)
 		dataset[f"{country}_incremental_effect_2"] = np.square(dataset[f"{country}_incremental_effect_1"])
 		dataset[f"{country}_incremental_effect_3"] = np.power(dataset[f"{country}_incremental_effect_1"], 3)
+		dataset[f"{country}_incremental_effect_4"] = np.power(dataset[f"{country}_incremental_effect_1"], 4)
+		dataset[f"{country}_incremental_effect_5"] = np.power(dataset[f"{country}_incremental_effect_1"], 5)
+		dataset[f"{country}_incremental_effect_6"] = np.power(dataset[f"{country}_incremental_effect_1"], 6)
+		dataset[f"{country}_incremental_effect_7"] = np.power(dataset[f"{country}_incremental_effect_1"], 7)
+		dataset[f"{country}_incremental_effect_8"] = np.power(dataset[f"{country}_incremental_effect_1"], 8)
+		dataset[f"{country}_incremental_effect_9"] = np.power(dataset[f"{country}_incremental_effect_1"], 9)
+		dataset[f"{country}_incremental_effect_10"] = np.power(dataset[f"{country}_incremental_effect_1"], 10)
 	dataset.to_csv(file)
 
 def add_fixed_effects_to_dataset(file):
