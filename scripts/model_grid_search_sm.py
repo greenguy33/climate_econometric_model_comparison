@@ -185,24 +185,24 @@ def find_best_model(target_name, target_var, num_folds, fe, ie, weights):
 train_data_files, test_data_files = {}, {}
 
 model_variations = {
-	"temp_vars":["temp_[weight]"]#,"temp_[weight]_2","temp_[weight]_3"],
-	# "precip_vars":["precip_[weight]","precip_[weight]_2","precip_[weight]_3"],
-	# "humidity_vars":["humidity_[weight]","humidity_[weight]_2","humidity_[weight]_3"],
-	# "temp_daily_std_vars":["temp_daily_std_[weight]","temp_daily_std_[weight]_2","temp_daily_std_[weight]_3"],
-	# "precip_daily_std_vars":["precip_daily_std_[weight]","precip_daily_std_[weight]_2","precip_daily_std_[weight]_3"],
-	# "humidity_daily_std_vars":["humidity_daily_std_[weight]","humidity_daily_std_[weight]_2","humidity_daily_std_[weight]_3"],
-	# "temp_annual_std_vars":["temp_annual_std_[weight]","temp_annual_std_[weight]_2","temp_annual_std_[weight]_3"],
-	# "precip_annual_std_vars":["precip_annual_std_[weight]","precip_annual_std_[weight]_2","precip_annual_std_[weight]_3"],
-	# "humidity_annual_std_vars":["humidity_annual_std_[weight]","humidity_annual_std_[weight]_2","humidity_annual_std_[weight]_3"],
-	# "fd_temp_vars":["fd_temp_[weight]","fd_temp_[weight]_2","fd_temp_[weight]_3"],
-	# "fd_precip_vars":["fd_precip_[weight]","fd_precip_[weight]_2","fd_precip_[weight]_3"],
-	# "fd_humidity_vars":["fd_humidity_[weight]","fd_humidity_[weight]_2","fd_humidity_[weight]_3"],
-	# "fd_temp_daily_std_vars":["fd_temp_daily_std_[weight]","fd_temp_daily_std_[weight]_2","fd_temp_daily_std_[weight]_3"],
-	# "fd_precip_daily_std_vars":["fd_precip_daily_std_[weight]","fd_precip_daily_std_[weight]_2","fd_precip_daily_std_[weight]_3"],
-	# "fd_humidity_daily_std_vars":["fd_humidity_daily_std_[weight]","fd_humidity_daily_std_[weight]_2","fd_humidity_daily_std_[weight]_3"],
-	# "fd_temp_annual_std_vars":["fd_temp_annual_std_[weight]","fd_temp_annual_std_[weight]_2","fd_temp_annual_std_[weight]_3"],
-	# "fd_precip_annual_std_vars":["fd_precip_annual_std_[weight]","fd_precip_annual_std_[weight]_2","fd_precip_annual_std_[weight]_3"],
-	# "fd_humidity_annual_std_vars":["fd_humidity_annual_std_[weight]","fd_humidity_annual_std_[weight]_2","fd_humidity_annual_std_[weight]_3"],
+	"temp_vars":["temp_[weight]","temp_[weight]_2","temp_[weight]_3"],
+	"precip_vars":["precip_[weight]","precip_[weight]_2","precip_[weight]_3"],
+	"humidity_vars":["humidity_[weight]","humidity_[weight]_2","humidity_[weight]_3"],
+	"temp_daily_std_vars":["temp_daily_std_[weight]","temp_daily_std_[weight]_2","temp_daily_std_[weight]_3"],
+	"precip_daily_std_vars":["precip_daily_std_[weight]","precip_daily_std_[weight]_2","precip_daily_std_[weight]_3"],
+	"humidity_daily_std_vars":["humidity_daily_std_[weight]","humidity_daily_std_[weight]_2","humidity_daily_std_[weight]_3"],
+	"temp_annual_std_vars":["temp_annual_std_[weight]","temp_annual_std_[weight]_2","temp_annual_std_[weight]_3"],
+	"precip_annual_std_vars":["precip_annual_std_[weight]","precip_annual_std_[weight]_2","precip_annual_std_[weight]_3"],
+	"humidity_annual_std_vars":["humidity_annual_std_[weight]","humidity_annual_std_[weight]_2","humidity_annual_std_[weight]_3"],
+	"fd_temp_vars":["fd_temp_[weight]","fd_temp_[weight]_2","fd_temp_[weight]_3"],
+	"fd_precip_vars":["fd_precip_[weight]","fd_precip_[weight]_2","fd_precip_[weight]_3"],
+	"fd_humidity_vars":["fd_humidity_[weight]","fd_humidity_[weight]_2","fd_humidity_[weight]_3"],
+	"fd_temp_daily_std_vars":["fd_temp_daily_std_[weight]","fd_temp_daily_std_[weight]_2","fd_temp_daily_std_[weight]_3"],
+	"fd_precip_daily_std_vars":["fd_precip_daily_std_[weight]","fd_precip_daily_std_[weight]_2","fd_precip_daily_std_[weight]_3"],
+	"fd_humidity_daily_std_vars":["fd_humidity_daily_std_[weight]","fd_humidity_daily_std_[weight]_2","fd_humidity_daily_std_[weight]_3"],
+	"fd_temp_annual_std_vars":["fd_temp_annual_std_[weight]","fd_temp_annual_std_[weight]_2","fd_temp_annual_std_[weight]_3"],
+	"fd_precip_annual_std_vars":["fd_precip_annual_std_[weight]","fd_precip_annual_std_[weight]_2","fd_precip_annual_std_[weight]_3"],
+	"fd_humidity_annual_std_vars":["fd_humidity_annual_std_[weight]","fd_humidity_annual_std_[weight]_2","fd_humidity_annual_std_[weight]_3"]
 	# "drought":["drought"],
 	# "wildfire":["wildfire"],
 	# "heat_wave":["heat_wave"],
@@ -213,16 +213,15 @@ model_variations = {
 
 target_var_list = {
 	"gdp":"fd_ln_gdp",
-	# "tfp":"fd_ln_tfp"
+	"tfp":"fd_ln_tfp"
 }
 
 effect_variations = {
-	"fixed_effects":[["country","year"],["year"]],#,,["country"],None],
-	"incremental_effects":[3,2],#,1,0],
-	"weights":["unweighted","pop_weighted"]#,"ag_weighted"]
+	"fixed_effects":["year"],
+	"incremental_effects":[0],
 }
 
-num_folds=1
+num_folds=10
 
 import time
 starttime = time.time()
@@ -231,14 +230,17 @@ for target_name, target_var in target_var_list.items():
 
 	# load training and test data into memory
 	for i in range(num_folds):
-		train_data_files[i] = pd.read_csv(f"data/regression/cross_validation/{target_name}_regression_data_insample_{str(i)}.csv")
-		test_data_files[i] = pd.read_csv(f"data/regression/cross_validation/{target_name}_regression_data_outsample_{str(i)}.csv")
+		train_data_files[i] = pd.read_csv(f"data/regression/cross_validation/{target_name}_regression_data_insample_festratified_{str(i)}.csv")
+		test_data_files[i] = pd.read_csv(f"data/regression/cross_validation/{target_name}_regression_data_outsample_festratified_{str(i)}.csv")
 
 	models = []
 	for fe in effect_variations["fixed_effects"]:
 		for ie in effect_variations["incremental_effects"]:
-			for weights in effect_variations["weights"]:
-				models.append(find_best_model(target_name, target_var, num_folds, fe, ie, weights))
+			if target_name == "gdp":
+				weights = "pop_weighted"
+			elif target_name == "tfp":
+				weights == "ag_weighted"
+			models.append(find_best_model(target_name, target_var, num_folds, fe, ie, weights))
 
 	overall_best_model = RegressionResult()
 	for new_model in models:

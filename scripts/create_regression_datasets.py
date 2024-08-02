@@ -85,10 +85,13 @@ def add_incremental_effects_to_dataset(file, year_range):
 
 def add_fixed_effects_to_dataset(file):
 	dataset = pd.read_csv(file)
+	dataset["region23"] = cc(dataset.country, origin="iso3c", destination="region23").replace(" ","_")
 	for country in sorted(list(set(dataset.country))):
 		dataset[f"{country}_country_fixed_effect"] = np.where(dataset.country == country, 1, 0)
 	for year in sorted(list(set(dataset.year))):
 		dataset[f"{year}_year_fixed_effect"] = np.where(dataset.year == year, 1, 0)
+	for region in sorted(list(set(dataset.region23))):
+		dataset[f"{region}_region_fixed_effect"] = np.where(dataset.region23 == region, 1, 0)
 	dataset.to_csv(file)
 
 def write_regression_data_to_file(file, data):
